@@ -1,4 +1,4 @@
-mport sys
+import sys
 
 sip = sys.argv[1]
 isenc = sys.argv[2]
