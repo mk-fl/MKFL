@@ -1,4 +1,4 @@
-import docker, os, sys
+import docker, os, sys, time
 
 isenc = sys.argv[1]
 fname = 'FL/fl_client_enc.py' if isenc else 'FL/fl_client.py'
@@ -10,8 +10,8 @@ client = docker.from_env()
 name = client.containers.get(HOSTNAME).name
 cur_id = name[-1]
 
-serv = client.containers.get('MKFL-flsrv-1')
-sip = serv.attrs['NetworkSettings']['Networks']['MKFL_fl']['IPAddress']
+serv = client.containers.get('mkfl-flsrv-1')
+sip = serv.attrs['NetworkSettings']['Networks']['mkfl_fl']['IPAddress']
 
 with open(fname) as flcl:
     lines = flcl.readlines()
@@ -23,5 +23,6 @@ for i in range(len(lines)):
 with open(fname, "w") as flclw:
     for line in lines:
         flclw.write(line)
+time.sleep(30)
 
 print(cur_id)
