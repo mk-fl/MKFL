@@ -94,6 +94,7 @@ class GrpcClientProxy(ClientProxy):
     def get_pk(
         self,
         context,
+        cid,
         timeout: Optional[float],
     ):
         """Refine the provided parameters using the locally held dataset."""
@@ -106,7 +107,7 @@ class GrpcClientProxy(ClientProxy):
             )
         )
         client_msg: ClientMessage = res_wrapper.client_message
-        get_pk_res = serde.get_pk_res_from_proto(client_msg.get_pk_res)
+        get_pk_res = serde.get_pk_res_from_proto(client_msg.get_pk_res, cid)
         return get_pk_res
     
     def send_pk(
@@ -129,6 +130,7 @@ class GrpcClientProxy(ClientProxy):
     
     def get_parms(
         self,
+        cid,
         timeout: Optional[float],
     ):
         """Refine the provided parameters using the locally held dataset."""
@@ -141,13 +143,14 @@ class GrpcClientProxy(ClientProxy):
             )
         )
         client_msg: ClientMessage = res_wrapper.client_message
-        get_parms_res = serde.get_parms_res_from_proto(client_msg.get_parms_res)
+        get_parms_res = serde.get_parms_res_from_proto(client_msg.get_parms_res, cid)
         return get_parms_res
     
     def send_enc(
         self,
         ctx,
         enc,
+        cid,
         timeout: Optional[float],
     ):
         """Refine the provided parameters using the locally held dataset."""
@@ -160,16 +163,17 @@ class GrpcClientProxy(ClientProxy):
             )
         )
         client_msg: ClientMessage = res_wrapper.client_message
-        send_enc_res = serde.send_enc_res_from_proto(client_msg.send_enc_res)
+        send_enc_res = serde.send_enc_res_from_proto(client_msg.send_enc_res, cid)
         return send_enc_res
     
     def send_ds(
         self,
         ctx,
-        enc,
+        ins,
         timeout: Optional[float],
     ):
         """Refine the provided parameters using the locally held dataset."""
+        enc, cid = ins
         send_ds_ins_msg = serde.send_ds_ins_to_proto(ctx, enc)
 
         res_wrapper: ResWrapper = self.bridge.request(
@@ -179,7 +183,7 @@ class GrpcClientProxy(ClientProxy):
             )
         )
         client_msg: ClientMessage = res_wrapper.client_message
-        send_ds_res = serde.send_ds_res_from_proto(client_msg.send_ds_res)
+        send_ds_res = serde.send_ds_res_from_proto(client_msg.send_ds_res,cid)
         return send_ds_res
 
     def evaluate_enc(

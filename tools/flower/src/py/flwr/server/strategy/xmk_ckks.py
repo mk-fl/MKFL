@@ -188,15 +188,16 @@ class FedAvg(Strategy):
         """Configure the next round of training."""
         
         # Sample clients
+        clients = None
         if clients is None: 
             sample_size, min_num_clients = self.num_fit_clients(
                 client_manager.num_available()
             )
-            clients = client_manager.sample(
+            clients = client_manager.sample_cid(
                 num_clients=sample_size, min_num_clients=min_num_clients
             )
         # Return client/config pairs
-        return [(client,ins) for client in clients]
+        return [(client,ins+(cid,)) for cid, client in clients]
     
     def configure_evaluate_enc(
         self, server_round: int, client_manager: ClientManager, clients = None
@@ -233,7 +234,7 @@ class FedAvg(Strategy):
         sample_size, min_num_clients = self.num_fit_clients(
             client_manager.num_available()
         )
-        clients = client_manager.sample(
+        clients = client_manager.sample_cid(
             num_clients=sample_size, min_num_clients=min_num_clients
         )
         config['N']= len(clients)
@@ -241,7 +242,7 @@ class FedAvg(Strategy):
 
 
         # Return client/config pairs
-        return [(client, fit_ins) for client in clients]
+        return [(client, (fit_ins,cid)) for cid,client in clients]
 
     def configure_evaluate(
         self, server_round: int, parameters: Parameters, client_manager: ClientManager

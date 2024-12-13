@@ -445,6 +445,7 @@ def fit_res_from_proto(msg: ClientMessage.FitRes) -> typing.FitRes:
 # === GetPK/SendPK messages ===
 
 ctx_g = None
+ctxs={}
 
 #send server's pk
 def get_pk_ins_to_proto(ctx) -> ServerMessage.GetPKIns:
@@ -459,6 +460,8 @@ def get_pk_ins_to_proto(ctx) -> ServerMessage.GetPKIns:
 def get_pk_ins_from_proto(msg: ServerMessage.GetPKIns) -> typing.GetPKIns:
     """Deserialize `GetPKIns` from ProtoBuf."""
     ctx = ts.context_from(msg.ctx)
+    global ctx_g
+    ctx_g=ctx
     return  ctx.public_key() 
 
 #send each individual pk
@@ -473,9 +476,11 @@ def get_pk_res_to_proto(ctx) -> ClientMessage.GetPKRes:
     return p
 
 
-def get_pk_res_from_proto(msg: ClientMessage.GetPKRes) :
+def get_pk_res_from_proto(msg: ClientMessage.GetPKRes, cid) :
     """Deserialize `GetPKRes` from ProtoBuf."""
     ctx = ts.context_from(msg.ctx)
+    global ctxs
+    ctxs[cid]=ctx
     pk = ts.ckks_vector(ctx, ctx.public_key())
     global ctx_g
     ctx_g=ctx
@@ -529,17 +534,17 @@ def get_parms_ins_from_proto(msg: ServerMessage.GetParmsIns):
 #send initial parameters
 def get_parms_res_to_proto(ctx,parms) -> ClientMessage.GetParmsRes:
     """Serialize `GetParmsRes` to ProtoBuf."""
-    ctx_proto = ctx.serialize()
+    #ctx_proto = ctx.serialize()
     parms_proto = parms.serialize()
     #return ClientMessage.GetParmsRes(ctx=ctx_proto, parms=parms_proto)
-    p= ClientMessage.GetParmsRes(ctx=ctx_proto, parms=parms_proto)
+    p= ClientMessage.GetParmsRes(ctx=None, parms=parms_proto)
     #log(INFO,f"get_parms_res_to_proto: {get_size(p) } {sys.getsizeof(p)} {sys.getsizeof(parms_proto)+sys.getsizeof(ctx_proto)} {sys.getsizeof(ctx_proto)} {sys.getsizeof(parms_proto)}")
     return p
 
-def get_parms_res_from_proto(msg: ClientMessage.GetParmsRes) :        
+def get_parms_res_from_proto(msg: ClientMessage.GetParmsRes,cid) :        
     """Deserialize `GetParmsRes` from ProtoBuf."""
-    ctx = ts.context_from(msg.ctx)
-    #ctx=ctx_g
+    #ctx = ts.context_from(msg.ctx)
+    ctx=ctxs[cid]
     parms = ts.ckks_vector_from(ctx, msg.parms)
     return parms
 
@@ -548,34 +553,34 @@ def get_parms_res_from_proto(msg: ClientMessage.GetParmsRes) :
 #send encrypted vector
 def send_enc_ins_to_proto(ctx,enc):
     """Serialize `SendEncIns` to ProtoBuf."""
-    ctx_proto = ctx.serialize()
+    #ctx_proto = ctx.serialize()
     enc_proto = enc.serialize()
     #return ServerMessage.SendEncIns(ctx=ctx_proto, enc = enc_proto)
-    p= ServerMessage.SendEncIns(ctx=ctx_proto, enc = enc_proto)
+    p= ServerMessage.SendEncIns(ctx=None, enc = enc_proto)
     #log(INFO,f"send_enc_ins_to_proto: {get_size(p)} {sys.getsizeof(p)} {sys.getsizeof(ctx_proto)+sys.getsizeof(enc_proto)} {sys.getsizeof(ctx_proto)} {sys.getsizeof(enc_proto)}")
     return p
 
 def send_enc_ins_from_proto(msg : ServerMessage.SendEncIns):
     """Deserialize `SendEncIns` from ProtoBuf."""
-    ctx = ts.context_from(msg.ctx)
-    #ctx=ctx_g
+    #ctx = ts.context_from(msg.ctx)
+    ctx=ctx_g
     enc = ts.ckks_vector_from(ctx, msg.enc)
     return enc
 
 #send each individual decryption share
 def send_enc_res_to_proto(ctx,ds):
     """Serialize `SendEncRes` to ProtoBuf."""
-    ctx_proto = ctx.serialize()
+    #ctx_proto = ctx.serialize()
     ds_proto = ts.PlaintextVector(ds).serialize()
     #return ClientMessage.SendEncRes(ctx=ctx_proto, ds = ds_proto)
-    p= ClientMessage.SendEncRes(ctx=ctx_proto, ds = ds_proto)
+    p= ClientMessage.SendEncRes(ctx=None, ds = ds_proto)
     #log(INFO,f"send_enc_res_to_proto: {get_size(p)} {sys.getsizeof(p)} {sys.getsizeof(ctx_proto)+sys.getsizeof(ds_proto)} {sys.getsizeof(ctx_proto)} {sys.getsizeof(ds_proto)}")
     return p
 
-def send_enc_res_from_proto(msg: ClientMessage.SendEncRes):
+def send_enc_res_from_proto(msg: ClientMessage.SendEncRes,cid):
     """Deserialize `SendEncRes` from ProtoBuf."""
     #ctx = ts.context_from(msg.ctx)
-    ctx=ctx_g
+    ctx=ctxs[cid]
     ds = ts.plaintext_vector_from(ctx,msg.ds)
     return ds.data.plaintext()
 
@@ -603,17 +608,17 @@ def send_ds_ins_from_proto(msg:ServerMessage.SendDSIns):
 #send new parameters
 def send_ds_res_to_proto(ctx, enc, loss=0, num_example=0, metrics={}):
     """Serialize `SendDSRes` to ProtoBuf."""
-    ctx_proto = ctx.serialize()
+    #ctx_proto = ctx.serialize()
     enc_proto = enc.serialize()
     metrics_msg = None if metrics is None else metrics_to_proto(metrics)
     #return ClientMessage.SendDSRes(ctx = ctx_proto, enc = enc_proto, loss=loss, num_examples=num_example, metrics = metrics_msg)
-    p= ClientMessage.SendDSRes(ctx = ctx_proto, enc = enc_proto, loss=loss, num_examples=num_example, metrics = metrics_msg)
+    p= ClientMessage.SendDSRes(ctx = None, enc = enc_proto, loss=loss, num_examples=num_example, metrics = metrics_msg)
     #log(INFO,f"send_ds_res_to_proto: {get_size(p)} {sys.getsizeof(p)} {sys.getsizeof(ctx_proto)+sys.getsizeof(enc_proto)+sys.getsizeof(metrics_msg)+sys.getsizeof(loss)+sys.getsizeof(num_example)} {sys.getsizeof(ctx_proto)} {sys.getsizeof(enc_proto)}")
     return p
-def send_ds_res_from_proto(msg:ClientMessage.SendDSRes):
+def send_ds_res_from_proto(msg:ClientMessage.SendDSRes,cid):
     """Deserialize `SendDSRes` from ProtoBuf."""
-    ctx = ts.context_from(msg.ctx)
-    #ctx=ctx_g
+    #ctx = ts.context_from(msg.ctx)
+    ctx=ctxs[cid]
     enc = ts.ckks_vector_from(ctx, msg.enc)
     metrics = None if msg.metrics is None else metrics_from_proto(msg.metrics)
     return enc, typing.EvaluateRes(

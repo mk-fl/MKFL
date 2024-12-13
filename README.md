@@ -106,12 +106,28 @@ To check logs:
 docker container logs [container_id]
 ```
 
+## Results
+
+Results are stored in the folder specified by the *filepath* argument.
+In the specified folder, a new folder, having as name the time of the beginning of the federated learning process, is created. In this folder are saved the parameters generated at each round and a *csv* file containing some metrics about the experiments.
+
+For the client, the received aggregated parameters are saved named as *global* while the newly generated parameters are saved named as *local*. The server only saves the aggregated parameters. 
+For the client, the *csv* file contains the following metrics: model, accuracy, precision, recall, f1 score, balanced accuracy, loss, train time, test time and the predicted labels.
+These metrics are evaluated by the model using the received parameters and then by the new model after fitting. There are thus two entry lines per round: one for the metrics evaluated before fitting and one after fitting. Additionally, the last line represents the true labels of the test set.
+
+For the server, the *csv* file contains the same metrics as for the clients. 
+The metrics finishing by:
+	- *df* represent the mean of the client metrics evaluated before fitting.
+	- *d* represent the mean of the client metrics evaluated after fitting.
+	- *c* represent the metric evaluated on the server testset.
+Additionally, the labels predicted by the server are shown on the last line.
+
 ## Examples
 Example datasets are provided in *src/databases*.
 
 The first one is the directory *examples_scdg*. It contains graphical representation of malware. The dataset to give as parameter is *example_graph* and the model is *GINE*.
 
-The second dataset is *example_images.zip*. It contains image representations of malware. It should first be unzipped in a folder of the same name. The dataset to give as parameter is *example_images* and the model is *images*.
+The second one is the directory *example_images*. It contains image representations of malware. The dataset to give as parameter is *example_images* and the model is *images*.
 
 
 ## References
