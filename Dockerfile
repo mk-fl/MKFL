@@ -1,25 +1,22 @@
 FROM python:3.12-slim
 
-LABEL Description="FL"
+LABEL Description="MKFL"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install --no-install-recommends -y git wget unzip cmake curl git build-essential automake libtool libtool-bin
 
+
+RUN mkdir /mkfl
 RUN mkdir /tools
+COPY ./src /mkfl
+COPY ./tools /tools
+
 WORKDIR /tools
 
-RUN wget -O flower-main.zip https://github.com/marielonfils/flower/archive/refs/heads/main.zip
-RUN unzip flower-main.zip
-WORKDIR ./flower-main
+WORKDIR /tools/flower
 RUN pip install .
-WORKDIR /tools
-
-
-RUN wget -O TenSEAL-main.zip https://github.com/marielonfils/TenSEAL/archive/refs/heads/main.zip
-RUN unzip TenSEAL-main.zip
-WORKDIR ./TenSEAL-main
-RUN sed -i "s|v2.6.2|v2.11.1|g" ./cmake/pybind11.cmake
+WORKDIR /tools/TenSEAL
 RUN pip install .
 WORKDIR /
 
@@ -27,15 +24,12 @@ RUN pip install dill==0.3.8 GraKeL==0.1.10 matplotlib==3.8.1 matplotlib-inline==
 RUN pip install pyg_lib torch_geometric torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.4.0+cpu.html
 RUN pip install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cpu
 
-
 RUN pip cache purge
 RUN mkdir /results
 RUN mkdir /databases
-RUN mkdir /ccaflr
-COPY ./src /ccaflr
-WORKDIR /ccaflr
+WORKDIR /mkfl
 RUN chmod +x FL/*.sh
 RUN chmod +x FL/certificates/*.sh
 RUN FL/certificates/generate_ca.sh
 
-WORKDIR /ccaflr
+WORKDIR /mkfl

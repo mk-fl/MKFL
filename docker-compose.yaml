@@ -1,17 +1,17 @@
-name: 'EFL'
+name: 'MKFL'
 
 services:
   flsrv:
-    image: ccaflr
+    image: mkfl
     networks:
       - fl
     entrypoint: [ "bash", "-c", "FL/docker_se.sh ${NCLIENTS} ${NROUNDS} ${DATASET} ${MODEL} ${ISENC}"]
     volumes:
       - ${FILEPATH}/:/results
-      - ${DATABASEPATH}/:/ccaflr/databases
+      - ${DATABASEPATH}/:/mkfl/databases
       - /var/run/docker.sock:/var/run/docker.sock
   flcl:
-    image: ccaflr
+    image: mkfl
     networks:
       - fl
     deploy:
@@ -20,7 +20,7 @@ services:
     entrypoint: [ "bash", "-c", "FL/docker_cl.sh ${NCLIENTS} ${NROUNDS} ${DATASET} ${MODEL} ${ISENC}"]
     volumes:
       - ${FILEPATH}/:/results
-      - ${DATABASEPATH}/:/ccaflr/databases
+      - ${DATABASEPATH}/:/mkfl/databases
       - /var/run/docker.sock:/var/run/docker.sock
 
 networks:

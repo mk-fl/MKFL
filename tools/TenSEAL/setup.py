@@ -81,14 +81,14 @@ class CMakeBuild(build_ext):
 setuptools.setup(
     name="tenseal",
     version=find_version(),
-    author="OpenMined, adapted by Marie Lonfils",
+    author="OpenMined, adapted by Anonymous",
     author_email="info@openmined.org",
     description="A Library for Homomorphic Encryption Operations on Tensors",
     license="Apache-2.0",
     keywords="homomorphic encryption tensor deep learning privacy secure",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
-    url="https://github.com/marielonfils/TenSEAL",
+    url="https://github.com/anonymous",
     packages=setuptools.find_packages(include=["tenseal", "tenseal.*"]),
     classifiers=[
         "Programming Language :: C++",

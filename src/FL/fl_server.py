@@ -105,7 +105,7 @@ def get_aggregate_evaluate_fn(model: torch.nn.Module, valset,id,metrics):
 
 def main():
     #Parse command line argument `nclients`
-    n_clients, id, nrounds, dataset_name, methodo, threshold, filename, ce, model_type, model_path, datapath, split = parse_args.parse_arg_server()
+    n_clients, id, nrounds, dataset_name, methodo, threshold, filename, model_type, model_path, datapath, split = parse_args.parse_arg_server()
     dirname=None
     if filename is not None:
         timestr1 = time.strftime("%Y%m%d-%H%M%S")
@@ -168,7 +168,7 @@ def main():
         Path("./FL/.cache/certificates/server.pem").read_bytes(),
         Path("./FL/.cache/certificates/server.key").read_bytes(),
         ),
-        contribution=ce,
+        contribution=False,
         methodo = methodo,
         threshold = threshold,
     )

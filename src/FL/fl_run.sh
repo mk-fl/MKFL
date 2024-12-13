@@ -17,7 +17,7 @@ for ((j=0; j<ntimes;j++)); do
     f="${filepre}${nclients}_${nrounds}${fileext}"
     echo -n $current_date_time >> $f
     echo $f
-    python ./FL/fl_server.py --nclients=${nclients} --nrounds=${nrounds} --filepath=${filepath} --dataset=${dataset} --noce --model=${model}| awk -F"FFFNNN" 'BEGIN { ORS=" " }; !/^$/{print $2}' >> $f &
+    python ./FL/fl_server.py --nclients=${nclients} --nrounds=${nrounds} --filepath=${filepath} --dataset=${dataset} --model=${model}| awk -F"FFFNNN" 'BEGIN { ORS=" " }; !/^$/{print $2}' >> $f &
     pids+=($!)
     sleep 40
 

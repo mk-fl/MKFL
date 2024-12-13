@@ -96,7 +96,7 @@ def init_datasets_split_scdg1(n_clients, id, datapath):
 
 
 def init_datasets_else(n_clients, id, datapath, split):
-    ds_path = "./databases/examples_samy/BODMAS/01"
+    ds_path = "./databases/examples_scdg/BODMAS/01"
     if datapath is not None:
         ds_path=datapath
     families=["berbew","sillyp2p","benjamin","small","mira","upatre","wabot"]
@@ -273,10 +273,10 @@ def main(n_clients):
     residual = False
     id = n_clients
 
-    # dataset, label, fam_idx, fam_dict = init_dataset("./databases/examples_samy/big_dataset/merged/traindata/CDFS", families, "./mapping.txt", [], {}, False)
+    # dataset, label, fam_idx, fam_dict = init_dataset("./databases/examples_scdg/big_dataset/merged/traindata/CDFS", families, "./mapping.txt", [], {}, False)
     mapping = read_mapping("./mapping.txt")
     reversed_mapping = read_mapping_inverse("./mapping.txt")
-    dataset, label, fam_idx, fam_dict, dataset_wl = init_dataset("./databases/examples_samy/BODMAS/01", families, reversed_mapping, [], {}, False)
+    dataset, label, fam_idx, fam_dict, dataset_wl = init_dataset("./databases/examples_scdg/BODMAS/01", families, reversed_mapping, [], {}, False)
 
     # Print datasets lengths:
     #print(f"GNN Dataset length: {len(dataset)}")
@@ -289,7 +289,7 @@ def main(n_clients):
     cprint(f"Client {id} : datasets length  {len(wl_full_train_dataset)} {len(wl_test_dataset)}",id)    
 
     # graph kernel
-    wl_model = SVMWLClassifier("./databases/examples_samy/BODMAS/01", 0.45, families)
+    wl_model = SVMWLClassifier("./databases/examples_scdg/BODMAS/01", 0.45, families)
     wl_model.train(dataset=wl_full_train_dataset, label=wl_y_full_train)
     wl_y_pred = wl_model.classify(dataset=wl_test_dataset)
 

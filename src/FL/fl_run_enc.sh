@@ -20,7 +20,7 @@ for ((k=2; k<nclients; k++)); do
         mkdir -p $filepath
         echo -n $current_date_time >> $f
         echo $f
-        python ./FL/fl_server_enc.py --nclients=${k} --nrounds=${nrounds} --filepath=${filepath} --dataset=${dataset} --noce --model=${model}| awk -F"FFFNNN" 'BEGIN { ORS=" " }; !/^$/{print $2}' >> $f &
+        python ./FL/fl_server_enc.py --nclients=${k} --nrounds=${nrounds} --filepath=${filepath} --dataset=${dataset} --model=${model}| awk -F"FFFNNN" 'BEGIN { ORS=" " }; !/^$/{print $2}' >> $f &
         pids+=($!)
         sleep 30
     

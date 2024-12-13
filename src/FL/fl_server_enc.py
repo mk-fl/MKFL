@@ -119,7 +119,7 @@ def get_aggregate_evaluate_enc_fn(m, valset,id,metrics):
 
 def main():
     #Parse command line argument `nclients`
-    n_clients, id, nrounds, dataset_name, methodo, threshold, filename, ce, model_type, model_path, datapath, split = parse_args.parse_arg_server()
+    n_clients, id, nrounds, dataset_name, methodo, threshold, filename, model_type, model_path, datapath, split = parse_args.parse_arg_server()
     
     #For storing results
     dirname=None
@@ -187,7 +187,7 @@ def main():
             Path("./FL/.cache/certificates/server.pem").read_bytes(),
             Path("./FL/.cache/certificates/server.key").read_bytes(),),
         enc=True,
-        contribution=ce,
+        contribution=False,
         shape=shapes,
         methodo = methodo,
         threshold = threshold,

@@ -1,8 +1,8 @@
 import docker, os
 
 client = docker.from_env()
-serv = client.containers.get('efl-flsrv-1')
-ip = serv.attrs['NetworkSettings']['Networks']['efl_fl']['IPAddress']
+serv = client.containers.get('MKFL-flsrv-1')
+ip = serv.attrs['NetworkSettings']['Networks']['MKFL_fl']['IPAddress']
 
 with open('FL/certificates/certificate_docker.conf', "a+") as flclw:
      flclw.write("IP.3 = " + ip + '\n')

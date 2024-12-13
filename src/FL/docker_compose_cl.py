@@ -10,8 +10,8 @@ client = docker.from_env()
 name = client.containers.get(HOSTNAME).name
 cur_id = name[-1]
 
-serv = client.containers.get('efl-flsrv-1')
-sip = serv.attrs['NetworkSettings']['Networks']['efl_fl']['IPAddress']
+serv = client.containers.get('MKFL-flsrv-1')
+sip = serv.attrs['NetworkSettings']['Networks']['MKFL_fl']['IPAddress']
 
 with open(fname) as flcl:
     lines = flcl.readlines()

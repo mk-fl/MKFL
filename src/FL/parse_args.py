@@ -46,11 +46,6 @@ def parse_arg_server():
         action="store_true",
         help="Specifies if the dataset should be used in its entirety or split into smaller parts",
     )
-    parser.add_argument(
-        "--noce",
-        action="store_false",
-        help="Specifies if there is contribution evaluation or not",
-    )
 
     parser.add_argument(
         "--methodo",
@@ -89,13 +84,12 @@ def parse_arg_server():
     methodo = args.methodo
     threshold = args.threshold
     filename = args.filepath
-    ce=args.noce
     model_type = args.model
     model_path = args.modelpath
     datapath=args.datapath
     split=args.split_dataset
 
-    return n_clients, id, nrounds, dataset_name, methodo, threshold, filename, ce, model_type, model_path, datapath, split
+    return n_clients, id, nrounds, dataset_name, methodo, threshold, filename, model_type, model_path, datapath, split
 
 def parse_arg_client():
     # Parse command line argument of client
