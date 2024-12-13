@@ -9,6 +9,7 @@ MKFL is a privacy-preserving federated learning tool based on the xMK-CKKS encry
 - [Installation](#installation)
 - [Usage](#usage)
 - [Docker](#docker)
+- [Results](#results)
 - [Examples](#examples)
 
 
