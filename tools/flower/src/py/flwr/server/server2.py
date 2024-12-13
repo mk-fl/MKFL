@@ -124,9 +124,9 @@ class Server:
         if clients is None:
             min_num_clients = self.strategy.min_available_clients
             #TODO check if all clients are available
-            clients = self._client_manager.sample(min_num_clients,min_num_clients)
+            clients = self._client_manager.sample_cid(min_num_clients,min_num_clients)
         get_pk_ins = self.context
-        client_instructions= [(client, get_pk_ins) for client in clients]
+        client_instructions= [(client, (get_pk_ins, cid)) for cid,client in clients]
         # Get public keys from all clients
         results, failures = fn_clients(
             client_instructions=client_instructions,
@@ -144,7 +144,7 @@ class Server:
         parameters_aggregated, metrics_aggregated = aggregated_result
         if parameters_aggregated is None :
             raise RuntimeError("Error while aggregating public keys")
-        return parameters_aggregated, len(results), clients
+        return parameters_aggregated, len(results),[client for c,client in clients] #clients
     
     def set_pk(self, pk):
         self.context.data.set_publickey(ts._ts_cpp.PublicKey(pk.data.ciphertext()[0]))
@@ -173,12 +173,13 @@ class Server:
     
     def get_initial_parameters_enc(self, timeout: Optional[float]) -> Parameters:
         """Get initial parameters from all of the available clients."""
-        clients = self.clients
+        clients = None #self.clients
         if clients is None:
             min_num_clients = self.strategy.min_available_clients  
-            clients = self._client_manager.sample(min_num_clients,min_num_clients)
+            clients = self._client_manager.sample_cid(min_num_clients,min_num_clients)
+            
         # Get initial parameters from all clients
-        client_instructions= [(client, None) for client in clients]
+        client_instructions= [(client, cid) for cid,client in clients]
         results, failures = fn_clients(
             client_instructions=client_instructions,
             client_fn=get_parms_client,
@@ -467,6 +468,7 @@ class Server:
         log(INFO, "#################SET PK#################")
         t0=time.time()
         pk_aggregated,self.n,self.clients = self.get_pk(timeout=timeout) #TODO fix timeout
+        print(self.clients)
         self.client_mapping = {c.cid:i for i,c in enumerate(self.clients)}
         self.n_tot = self.n
         self.set_pk(pk_aggregated)
@@ -918,10 +920,11 @@ def fn_clients(
 
 
 def get_pk_client(
-    client: ClientProxy, context, timeout: Optional[float]
+    client: ClientProxy, ins, timeout: Optional[float]
 ) :# TODO-> Tuple[ClientProxy, ]:
+    context, cid = ins
     """Refine parameters on a single client."""
-    get_pk_res = client.get_pk(context,timeout=timeout)
+    get_pk_res = client.get_pk(context,cid,timeout=timeout)
     pk=ts._ts_cpp.PublicKey(get_pk_res.data.ciphertext()[0])
     return client, get_pk_res
 
@@ -943,7 +946,8 @@ def get_parms_client(
     client: ClientProxy, ins, timeout: Optional[float]
 ) :# TODO-> Tuple[ClientProxy, ]:
     """Refine parameters on a single client."""
-    get_parms_res = client.get_parms(timeout=timeout)
+    cid = ins
+    get_parms_res = client.get_parms(cid, timeout=timeout)
     return client, get_parms_res
 
 def send_enc(
@@ -951,8 +955,8 @@ def send_enc(
 ) -> Tuple[ClientProxy, FitRes]:
     """Refine parameters on a single client."""
     
-    context,enc = ins
-    fit_res = client.send_enc(context,enc, timeout=timeout)
+    context,enc,cid = ins
+    fit_res = client.send_enc(context,enc,cid, timeout=timeout)
     return client, fit_res
 
 def send_ds(

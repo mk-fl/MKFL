@@ -237,7 +237,7 @@ def parameters_to_proto(parameters: typing.Parameters) -> Parameters:
     l=0
     for t in parameters.tensors:
         l+=sys.getsizeof(t)
-    #log(INFO,f"parameters_to_proto: {get_size(p)} {sys.getsizeof(p)} {l+sys.getsizeof(parameters.tensor_type)} {type(parameters.tensors[0])} {type(parameters.tensor_type)}")
+    log(INFO,f"parameters_to_proto: {get_size(p)} {sys.getsizeof(p)} {l+sys.getsizeof(parameters.tensor_type)} {type(parameters.tensors[0])} {type(parameters.tensor_type)}")
     #return p
     return Parameters(tensors=parameters.tensors, tensor_type=parameters.tensor_type)
 
@@ -557,7 +557,7 @@ def send_enc_ins_to_proto(ctx,enc):
     enc_proto = enc.serialize()
     #return ServerMessage.SendEncIns(ctx=ctx_proto, enc = enc_proto)
     p= ServerMessage.SendEncIns(ctx=None, enc = enc_proto)
-    #log(INFO,f"send_enc_ins_to_proto: {get_size(p)} {sys.getsizeof(p)} {sys.getsizeof(ctx_proto)+sys.getsizeof(enc_proto)} {sys.getsizeof(ctx_proto)} {sys.getsizeof(enc_proto)}")
+    log(INFO,f"send_enc_ins_to_proto: {get_size(p)} {sys.getsizeof(p)} {sys.getsizeof(ctx_proto)+sys.getsizeof(enc_proto)} {sys.getsizeof(ctx_proto)} {sys.getsizeof(enc_proto)}")
     return p
 
 def send_enc_ins_from_proto(msg : ServerMessage.SendEncIns):
@@ -574,7 +574,7 @@ def send_enc_res_to_proto(ctx,ds):
     ds_proto = ts.PlaintextVector(ds).serialize()
     #return ClientMessage.SendEncRes(ctx=ctx_proto, ds = ds_proto)
     p= ClientMessage.SendEncRes(ctx=None, ds = ds_proto)
-    #log(INFO,f"send_enc_res_to_proto: {get_size(p)} {sys.getsizeof(p)} {sys.getsizeof(ctx_proto)+sys.getsizeof(ds_proto)} {sys.getsizeof(ctx_proto)} {sys.getsizeof(ds_proto)}")
+    log(INFO,f"send_enc_res_to_proto: {get_size(p)} {sys.getsizeof(p)} {sys.getsizeof(ctx_proto)+sys.getsizeof(ds_proto)} {sys.getsizeof(ctx_proto)} {sys.getsizeof(ds_proto)}")
     return p
 
 def send_enc_res_from_proto(msg: ClientMessage.SendEncRes,cid):
@@ -592,7 +592,7 @@ def send_ds_ins_to_proto(ctx, ins):
     config_msg = metrics_to_proto({})
     #return ServerMessage.SendDSIns(parameters=parameters_proto, config=config_msg)
     p = ServerMessage.SendDSIns(parameters=parameters_proto, config=config_msg)
-    #log(INFO,f"send_ds_ins_to_proto: {get_size(p)} {sys.getsizeof(p)}  {sys.getsizeof(parameters_proto)+sys.getsizeof(config_msg)}   {sys.getsizeof(parameters_proto)} {sys.getsizeof(config_msg)}")
+    log(INFO,f"send_ds_ins_to_proto: {get_size(p)} {sys.getsizeof(p)}  {sys.getsizeof(parameters_proto)+sys.getsizeof(config_msg)}   {sys.getsizeof(parameters_proto)} {sys.getsizeof(config_msg)}")
    
     return p
 
@@ -613,7 +613,7 @@ def send_ds_res_to_proto(ctx, enc, loss=0, num_example=0, metrics={}):
     metrics_msg = None if metrics is None else metrics_to_proto(metrics)
     #return ClientMessage.SendDSRes(ctx = ctx_proto, enc = enc_proto, loss=loss, num_examples=num_example, metrics = metrics_msg)
     p= ClientMessage.SendDSRes(ctx = None, enc = enc_proto, loss=loss, num_examples=num_example, metrics = metrics_msg)
-    #log(INFO,f"send_ds_res_to_proto: {get_size(p)} {sys.getsizeof(p)} {sys.getsizeof(ctx_proto)+sys.getsizeof(enc_proto)+sys.getsizeof(metrics_msg)+sys.getsizeof(loss)+sys.getsizeof(num_example)} {sys.getsizeof(ctx_proto)} {sys.getsizeof(enc_proto)}")
+    log(INFO,f"send_ds_res_to_proto: {get_size(p)} {sys.getsizeof(p)} {sys.getsizeof(ctx_proto)+sys.getsizeof(enc_proto)+sys.getsizeof(metrics_msg)+sys.getsizeof(loss)+sys.getsizeof(num_example)} {sys.getsizeof(ctx_proto)} {sys.getsizeof(enc_proto)}")
     return p
 def send_ds_res_from_proto(msg:ClientMessage.SendDSRes,cid):
     """Deserialize `SendDSRes` from ProtoBuf."""
