@@ -468,8 +468,8 @@ def get_pk_ins_from_proto(msg: ServerMessage.GetPKIns) -> typing.GetPKIns:
 def get_pk_res_to_proto(ctx) -> ClientMessage.GetPKRes:
     """Serialize `GetPKRes` to ProtoBuf."""
     ctx_proto = ctx.serialize()
-    pk = ctx.public_key()
-    pk_ckks_proto = ts.ckks_vector(ctx,pk).serialize()
+    #pk = ctx.public_key()
+    #pk_ckks_proto = ts.ckks_vector(ctx,pk).serialize()
     #return ClientMessage.GetPKRes(ctx=ctx_proto)
     p=ClientMessage.GetPKRes(ctx=ctx_proto)
     #log(INFO,f"get_pk_res_to_proto: {get_size(p)} {sys.getsizeof(p)} {sys.getsizeof(ctx_proto)}")
@@ -490,8 +490,8 @@ def get_pk_res_from_proto(msg: ClientMessage.GetPKRes, cid) :
 def send_pk_ins_to_proto(ctx) -> ServerMessage.SendPKIns:
     """Serialize `SendPKIns` to ProtoBuf."""
     ctx_proto = ctx.serialize()
-    pk = ctx.public_key()
-    pk_ckks_proto = ts.ckks_vector(ctx,pk).serialize()
+    #pk = ctx.public_key()
+    #pk_ckks_proto = ts.ckks_vector(ctx,pk).serialize()
     #return ServerMessage.SendPKIns(ctx=ctx_proto)
     p=ServerMessage.SendPKIns(ctx=ctx_proto)
     #log(INFO,f"send_pk_ins_to_proto: {get_size(p)} {sys.getsizeof(p)} {sys.getsizeof(ctx_proto)}")
